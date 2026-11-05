@@ -22,10 +22,9 @@ Track: **Physical AI: Agents with a Body** (0G). Lane: robots and machines (sim 
 10. [Not yet verified against live 0G](#not-yet-verified-against-live-0g)
 11. [Testing](#testing)
 12. [Claims we make (and don't)](#claims-we-make-and-dont)
-13. [Hackathon commit plan](#hackathon-commit-plan)
-14. [Submission checklist](#submission-checklist)
-15. [Deployment addresses](#deployment-addresses)
-16. [Credits](#credits)
+13. [Submission checklist](#submission-checklist)
+14. [Deployment addresses](#deployment-addresses)
+15. [Credits](#credits)
 
 ---
 
@@ -332,7 +331,7 @@ These were researched from the 0G docs and SDK source but **not exercised with a
 
 | Assumption | Why it matters | Fallback |
 |---|---|---|
-| **Signature binding through the Router.** The broker signs `sha256(upstream request):sha256(response bytes)`. The Router adds `x_0g_trace`; we assume it re-marshals Go-style, so removing `x_0g_*` and re-marshalling rebuilds the signed bytes (`go`). `raw` covers pass-through | If neither matches, the robot (correctly) refuses every answer and safe-stops | Call the provider directly (Direct mode via `@0gfoundation/0g-compute-ts-sdk` `getRequestHeaders`), where the response bytes are the signed bytes. See commit plan item 39 |
+| **Signature binding through the Router.** The broker signs `sha256(upstream request):sha256(response bytes)`. The Router adds `x_0g_trace`; we assume it re-marshals Go-style, so removing `x_0g_*` and re-marshalling rebuilds the signed bytes (`go`). `raw` covers pass-through | If neither matches, the robot (correctly) refuses every answer and safe-stops | Call the provider directly (Direct mode via `@0gfoundation/0g-compute-ts-sdk` `getRequestHeaders`), where the response bytes are the signed bytes |
 | `0gm-1.0-35b-a3b` accepts an OpenAI `image_url` data URI | The vision call | Try the `anthropic` message format (both are listed as supported) |
 | The Router passes `ZG-Res-Key`; otherwise the body id is `chatcmpl-<chatKey>` | Signature lookup | We try header, then stripped body id, then the raw body id |
 | Signatures are kept about 20 minutes, in memory, on the broker | The verifier needs them later | We fetch right after each answer and store `{text, signature}` in the entry |
@@ -369,79 +368,6 @@ End to end (local): `npm run dev:local`, then drive the console. All beats above
 | "Tamper-evident log." | "Tamper-proof." / "Proves what the camera saw." |
 
 Our nonce is `keccak256(missionId, obs_hash, checkpoint)`. That is the PRD's `keccak256(obs_hash, seq)` plus the mission id, so an answer signed in one mission cannot be replayed in another.
-
----
-
-## Hackathon commit plan
-
-When the hackathon repo is created, move this code in **small, reviewable commits** that follow the PRD gates. Each line is one commit: copy the listed files, run the check, then commit. Times are hours from kickoff (H+0).
-
-**Phase 0: scaffold (H+0 to H+1)**
-
-1. `chore: repo scaffold` adds `.gitignore`, `.env.example`, root `package.json`, a README stub.
-2. `chore(contracts): foundry project (solc 0.8.27, cancun, galileo rpc)` adds `contracts/foundry.toml`, then run `forge install --root contracts foundry-rs/forge-std` (commits it as a submodule in the new repo).
-3. `chore(core): typescript package` adds `core/package.json`, `tsconfig.json`, `src/config.ts`.
-4. `chore(robot): python package + pinned requirements` adds `robot/requirements.txt`, `blackbox_robot/__init__.py`.
-
-**Gate A: 0G answers and the sim is deterministic (H+3)**
-
-5. `feat(robot): seeded deck texture with crack and decoy variants` adds `world.py`.
-6. `feat(robot): pybullet + native physics backends` adds `physics.py`.
-7. `feat(robot): deterministic mission sim and trajectory hash` adds `mission.py`; check that the same seed gives the same hash twice.
-8. `feat(robot): probe crop generator` adds `probe_images.py`, `assets/probe/`.
-9. `feat(core): canonical and Go-style JSON encoders` adds `src/lib/canonical.ts`.
-10. `feat(core): 0G Router client with trust mode and failover` adds `src/zg/router.ts`.
-11. `feat(core): InferenceServing service record + TEE signature fetch` adds `src/zg/services.ts`.
-12. `feat(core): Gate A probe script` adds `scripts/probe-0g.ts`, `src/zg/decide.ts` (vision only). **Run it, and paste the results into the PR.**
-13. `feat(core): 0G Storage MemData upload/download` adds `src/storage/index.ts`; check `npm run probe -- --storage`.
-
-**Gate B: the loop closes through the interlock (H+10)**
-
-14. `feat(robot): strict answer parser and verify-before-actuate interlock` adds `interlock.py`, `canonical.py`, `crypto.py`.
-15. `feat(robot): robot-signed keccak256 episode log` adds `episode_log.py`.
-16. `feat(robot): adapter service with lease watchdog and safe stop` adds `adapter.py`.
-17. `test(robot): interlock and lease tests` adds `tests/helpers.py`, `tests/test_robot.py`.
-18. `feat(core): TS interlock mirror + cross-language vectors` adds `src/lib/interlock.ts`, `test/crosslang.test.ts`, `robot/tests/gen_vectors.py`.
-19. `feat(core): mission orchestrator and single writer queue` adds `src/mission.ts`, `src/lib/queue.ts`, `src/robotClient.ts`.
-20. `feat(core): http server (robot API)` adds `src/server.ts`.
-21. `feat(core): dev-only 0G mock` adds `src/mock0g/`.
-22. `feat: first live checkpoint on 0G` gets the first entry onto storagescan. Note 3 request ids for the README.
-
-**Gate C: registry live on Galileo (H+16)**
-
-23. `feat(contracts): BlackboxRegistry with robot-signed anchors` adds `src/BlackboxRegistry.sol`, `src/interfaces/IRobotRegistry.sol`.
-24. `feat(contracts): SimpleRobotRegistry for anvil and mainnet` adds `src/SimpleRobotRegistry.sol`.
-25. `test(contracts): registry tests` adds `test/BlackboxRegistry.t.sol`.
-26. `feat(contracts): deploy script` adds `script/Deploy.s.sol`.
-27. `chore(contracts): deploy BlackboxRegistry to Galileo` commits `deployments/16602.json` and fills the README address table.
-28. `feat(core): registry client, anchor every 2 decisions, close` adds `src/chain/`.
-29. `feat(core): zerobot robot setup script` adds `scripts/setup-robot.ts`, `scripts/keys.ts`.
-30. `feat(core): verifier library and CLI` adds `src/verifier/core.ts`, `cli.ts`.
-
-**Gate D: demo beats (H+22)**
-
-31. `feat(robot): replay CLI and counterfactual` adds `replay.py`.
-32. `feat(web): operator console (map, decision feed, ledger)` adds `web/index.html`, `app.js`, `report.js`, `style.css`.
-33. `feat(web): dishonest-operator and kill-switch controls` adds the demo hooks in `mission.ts` and `server.ts`.
-34. `feat(web): split-screen counterfactual`.
-35. `feat(web): public verifier page + Vercel config` adds `web/verify.html`, `verify.js`, `src/verifier/browser.ts`, `networks.ts`, `vercel.json`; then deploy.
-36. `feat(core): calibrated hold via /v1/decisions + human approval` (R16).
-37. `feat: one-command local stack` adds `scripts/dev-local.sh`.
-38. `feat(core): testnet failover endpoint` (R17), once the testnet Router URL is known.
-
-**Hardware lane (parallel, own gate at H+20, cut if it misses)**
-
-39. `feat(robot): rover driver with firmware watchdog` adds `rover.py`; bench-test the motors with the E-stop first.
-40. `test(hw): three full missions on the mat`, plus a log excerpt.
-
-**Contingency (only if Gate A shows no binding match)**
-
-41. `feat(core): direct provider mode via 0g-compute-ts-sdk` makes the response bytes equal the signed bytes.
-
-**Freeze, video and submission (T-10 h to T-2 h)**
-
-42. `docs: README with addresses, storagescan links for 3 request ids, demo video link`.
-43. `chore: release v0.1.0 (submission)`.
 
 ---
 
