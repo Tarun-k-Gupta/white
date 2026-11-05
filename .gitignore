@@ -21,3 +21,6 @@ robot/data/
 contracts/deployments/31337.json
 
 .DS_Store
+
+# private planning docs - not part of the code
+/Blackbox*PRD*.pdf
