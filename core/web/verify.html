@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blackbox Verifier</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+    .form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+    .form input, .form select { font: 13px var(--mono); background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    @media (max-width: 600px) { .wrap { padding: 10px; } .verdict { font-size: 18px; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><b>BLACKBOX</b><span>Public verifier: no account, no trust in the operator.</span></div>
+  </header>
+  <div class="wrap stack">
+    <section class="card">
+      <h2>Mission</h2>
+      <div class="form">
+        <label>Mission id <input id="mission" placeholder="0x…" /></label>
+        <label>Network
+          <select id="network"><option value="galileo">0G Galileo testnet (16602)</option><option value="mainnet">0G mainnet (16661)</option><option value="local">local anvil</option></select>
+        </label>
+        <label>BlackboxRegistry <input id="registry" placeholder="0x…" /></label>
+        <label>Storage source <input id="api" placeholder="0G indexer gateway (default) or a core URL" /></label>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="primary" id="go">Verify from 0G Chain + 0G Storage</button>
+        <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12px">or check a local copy of the log
+          <input type="file" id="file" accept=".json,.jsonl" /></label>
+      </div>
+      <p class="muted" style="font-size:12px;margin-bottom:0">This page reads the mission from BlackboxRegistry on 0G Chain, downloads the manifest and every log entry from 0G Storage by root hash, and recomputes every hash, robot signature, TEE signature, nonce and anchor in your browser.</p>
+    </section>
+    <section class="card" id="out" hidden></section>
+  </div>
+  <script src="verifier.bundle.js"></script>
+  <script type="module" src="verify.js"></script>
+</body>
+</html>

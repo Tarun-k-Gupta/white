@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blackbox Operator Console</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+</head>
+<body>
+  <div id="mockbar" class="mockbar" hidden>MOCK 0G - development stand-in, not 0G Compute. Set ZG_MODE=router for the real sealed model.</div>
+  <header class="top">
+    <div class="brand"><b>BLACKBOX</b><span>0G decides. Blackbox proves it.</span></div>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <div class="wrap grid">
+    <div class="stack">
+      <section class="card">
+        <h2>Inspection mission <span class="sp"></span><span class="mono muted" id="missionId">no mission</span></h2>
+        <canvas id="map" width="1400" height="520"></canvas>
+        <div class="lease"><i id="leaseBar"></i></div>
+        <div class="hud" id="hud"></div>
+
+        <div class="beats">
+          <div class="beat">
+            <div class="t">1 · Drop a crack</div>
+            <div class="row">
+              <button class="toggle on" id="modeCrack">Crack</button>
+              <button class="toggle" id="modeDecoy">Decoy</button>
+              <button class="primary" id="btnStart">Start mission</button>
+            </div>
+            <div class="muted" style="margin-top:6px;font-size:12px">Click the deck to place. Before or during the flight.</div>
+          </div>
+          <div class="beat">
+            <div class="t">2 · Did 0G move the robot?</div>
+            <div class="row"><button id="btnSplit">Split screen: force "continue"</button></div>
+          </div>
+          <div class="beat">
+            <div class="t">3 · Dishonest operator</div>
+            <div class="row">
+              <button class="danger" id="btnForge">Forge "continue"</button>
+              <button class="danger" id="btnTamperAns">Tamper 0G answer</button>
+              <button class="danger" id="btnTamperLog">Edit log, verify</button>
+            </div>
+          </div>
+          <div class="beat">
+            <div class="t">4 · Kill switch</div>
+            <div class="row">
+              <button class="danger" id="btnKill">Cut 0G link</button>
+              <button class="danger" id="btnEstop">E-stop</button>
+            </div>
+          </div>
+          <div class="beat">
+            <div class="t">5 · Verify</div>
+            <div class="row">
+              <button id="btnVerify">Verify on 0G</button>
+              <a id="lnkVerifier" target="_blank"><button>Public verifier ↗</button></a>
+              <button id="btnQR">QR</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Record on 0G <span class="sp"></span><span class="mono muted" id="queueInfo"></span></h2>
+        <div class="kv" id="recordKv"></div>
+        <div style="overflow:auto;margin-top:10px"><table class="ledger" id="ledger"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Robot adapter events</h2>
+        <div class="events" id="events"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Checkpoint decisions <span class="sp"></span><span class="mono muted" id="feedCount"></span></h2>
+      <div class="feed" id="feed"><div class="muted">Checkpoints appear here. At each one the robot holds, 0G's sealed model decides, and the robot checks the TEE signature before it moves.</div></div>
+    </section>
+  </div>
+
+  <div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+  <div class="toast" id="toast"></div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

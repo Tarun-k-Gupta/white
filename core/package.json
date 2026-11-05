@@ -1,0 +1,37 @@
+{
+  "name": "blackbox-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "start": "tsx src/server.ts",
+    "mock0g": "tsx src/mock0g/server.ts",
+    "verify": "tsx src/verifier/cli.ts",
+    "probe": "tsx scripts/probe-0g.ts",
+    "setup:robot": "tsx scripts/setup-robot.ts",
+    "build:web": "esbuild src/verifier/browser.ts --bundle --format=iife --platform=browser --minify --outfile=web/verifier.bundle.js",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "keys": "tsx scripts/keys.ts"
+  },
+  "dependencies": {
+    "@0gfoundation/0g-storage-ts-sdk": "1.2.13",
+    "dotenv": "^16.4.5",
+    "ethers": "6.13.1",
+    "pngjs": "^7.0.0"
+  },
+  "optionalDependencies": {
+    "@0gfoundation/0g-compute-ts-sdk": "0.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/pngjs": "^6.0.5",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "blackbox",
+  "private": true,
+  "description": "0G decides. Blackbox proves it. Verifiable decision recorder for inspection robots on 0G.",
+  "scripts": {
+    "setup": "npm --prefix core install && python3 -m venv robot/.venv && robot/.venv/bin/pip install -r robot/requirements.txt && forge install --root contracts --no-git --shallow foundry-rs/forge-std",
+    "dev:local": "bash scripts/dev-local.sh",
+    "core": "npm --prefix core run dev",
+    "mock0g": "npm --prefix core run mock0g",
+    "robot": "cd robot && .venv/bin/python -m blackbox_robot.adapter",
+    "replay": "cd robot && .venv/bin/python -m blackbox_robot.replay",
+    "verify": "npm --prefix core run verify --",
+    "probe": "npm --prefix core run probe --",
+    "keys": "npm --prefix core run keys",
+    "setup:robot": "npm --prefix core run setup:robot",
+    "test": "npm run test:contracts && npm run test:robot && npm run test:core",
+    "test:contracts": "cd contracts && forge test",
+    "test:robot": "cd robot && .venv/bin/python -m unittest discover -s tests",
+    "test:core": "npm --prefix core run typecheck && npm --prefix core test"
+  }
+}

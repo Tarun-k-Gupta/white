@@ -1,0 +1,23 @@
+# secrets
+.env
+.env.local
+.env.*.local
+
+# deps & builds
+node_modules/
+core/node_modules/
+robot/.venv/
+__pycache__/
+*.pyc
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/lib/
+
+# runtime data
+core/data/
+robot/data/
+.dev-logs/
+contracts/deployments/31337.json
+
+.DS_Store
